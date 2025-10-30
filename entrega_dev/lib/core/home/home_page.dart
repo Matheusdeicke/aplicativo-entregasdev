@@ -1,5 +1,6 @@
 import 'package:entrega_dev/theme/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -39,6 +40,7 @@ class _HomePageState extends State<HomePage> {
                   fontSize: 20,
                 ),
               ),
+              Container(width: 150),
               Text(
                 'Finalizadas',
                 style: TextStyle(
@@ -47,10 +49,11 @@ class _HomePageState extends State<HomePage> {
                   fontSize: 20,
                 ),
               ),
-              Icon(
-                Icons.arrow_right_alt,
-                size: 40,
-                color: const Color.fromARGB(255, 105, 100, 100),
+              IconButton(
+                onPressed: () {
+                  
+                }, 
+                icon: Icon(Icons.arrow_right_alt),
               ),
             ],
           ),
@@ -108,7 +111,9 @@ class _HomePageState extends State<HomePage> {
                         ),
                       IconButton(
                         icon: Icon(Icons.arrow_forward),
-                        onPressed: () {},
+                        onPressed: () {
+                          Modular.to.navigate('/map');
+                        },
                       ),
                     ],
                   ),
