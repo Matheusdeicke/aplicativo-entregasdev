@@ -1,3 +1,4 @@
+import 'package:entrega_dev/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,16 +12,108 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text(
-          'Home Page',
-          style: TextStyle(
-            fontFamily: 'Figtree',
-            fontSize: 36,
-            fontWeight: FontWeight.bold,
+      backgroundColor: AppColors.preto,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(25.0),
+            child: Center(
+              child: Text(
+                'Olá, bem vindo João!',
+                style: TextStyle(
+                  color: const Color.fromARGB(255, 105, 100, 100),
+                  fontFamily: 'Figtree',
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
-        ),
+          Row(
+            children: [
+              Text(
+                'Entrega disponíveis',
+                style: TextStyle(
+                  color: const Color.fromARGB(255, 105, 100, 100),
+                  fontFamily: 'Figtree',
+                  fontSize: 20,
+                ),
+              ),
+              Icon(
+                Icons.arrow_right_alt,
+                size: 40,
+                color: const Color.fromARGB(255, 105, 100, 100),
+              ),
+            ],
+          ),
+          Card(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  title: Text(
+                    'SUBWAY',
+                    style: TextStyle(fontFamily: 'Figtree', fontSize: 16),
+                  ),
+                  subtitle: Text(
+                    'R\$ 25,00',
+                    style: TextStyle(
+                      fontFamily: 'Figtree',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.location_on),
+                          SizedBox(width: 8.0),
+                          Text(
+                            'Rua 28 de Setembro, 120',
+                            style: TextStyle(
+                              fontFamily: 'Figtree',
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8.0),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time),
+                            SizedBox(width: 8.0),
+                            Text(
+                              '8 Km até a loja',
+                              style: TextStyle(
+                                fontFamily: 'Figtree',
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.arrow_forward),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
+// Componentizar as rows
