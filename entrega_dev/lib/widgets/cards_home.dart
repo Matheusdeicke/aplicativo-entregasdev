@@ -1,0 +1,1 @@
+// Aqui eu vou colocar os cards que aparecem na home, de forma componentizada

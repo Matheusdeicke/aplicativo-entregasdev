@@ -39,6 +39,14 @@ class _HomePageState extends State<HomePage> {
                   fontSize: 20,
                 ),
               ),
+              Text(
+                'Finalizadas',
+                style: TextStyle(
+                  color: const Color.fromARGB(255, 105, 100, 100),
+                  fontFamily: 'Figtree',
+                  fontSize: 20,
+                ),
+              ),
               Icon(
                 Icons.arrow_right_alt,
                 size: 40,
@@ -85,8 +93,7 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       SizedBox(height: 8.0),
-                      Expanded(
-                        child: Row(
+                        Row(
                           children: [
                             Icon(Icons.access_time),
                             SizedBox(width: 8.0),
@@ -99,7 +106,6 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-                      ),
                       IconButton(
                         icon: Icon(Icons.arrow_forward),
                         onPressed: () {},
