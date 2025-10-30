@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import '../../theme/colors.dart';
 
 class LoginPage extends StatefulWidget {
@@ -55,7 +56,9 @@ class _LoginPageState extends State<LoginPage> {
                     backgroundColor: const Color.fromARGB(255, 105, 100, 100),
                     foregroundColor: Colors.black,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Modular.to.navigate('/home');
+                  },
                   child: Text('Entrar'),
                 ),
               ),
