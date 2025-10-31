@@ -90,11 +90,11 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   return CardHomeWidget(
                     storeIcon: Icons.shopping_bag_outlined, 
-                    storeName: 'GUA.CO',
-                    distance: '12 km até a loja',
-                    deliveryLocation: 'Local de entrega - Germânia',
-                    address: 'Rua Professor Prudente, 518',
-                    price: 'R\$ 50,00',
+                    storeName: 'SUBWAY',
+                    distance: '8 km até a loja',
+                    deliveryLocation: 'Local de entrega - Centro',
+                    address: 'Rua 28 de Setembro, 120',
+                    price: 'R\$ 25,00',
                     onTap: () {
                       Modular.to.navigate('/delivery');
                     },
