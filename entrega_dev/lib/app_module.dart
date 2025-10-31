@@ -1,13 +1,13 @@
-import 'package:entrega_dev/core/delivery/map_page.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:entrega_dev/core/auth/login_page.dart';
-import 'package:entrega_dev/core/home/home_page.dart';
+import 'package:entrega_dev/modules/auth/login_module.dart';
+import 'package:entrega_dev/modules/home/home_module.dart';
+import 'package:entrega_dev/modules/delivery/delivery_module.dart';
 
 class AppModule extends Module {
   @override
   void routes(r) {
-    r.child('/', child: (_) => const LoginPage());
-    r.child('/home', child: (_) => const HomePage());
-    r.child('/mapa', child: (_) => const MapPage());
+    r.module('/', module: LoginModule());
+    r.module('/home', module: HomeModule());
+    r.module('/delivery', module: DeliveryModule());
   }
 }
