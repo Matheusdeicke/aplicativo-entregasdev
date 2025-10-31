@@ -71,10 +71,15 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         SizedBox(width: 4),
-                        Icon(
-                          Icons.arrow_forward,
-                          color: segundaCor,
-                          size: 16,
+                        IconButton(
+                          icon: Icon(
+                            Icons.arrow_forward,
+                            color: segundaCor,
+                            size: 16,
+                          ),
+                          onPressed: () {
+                            Modular.to.navigate('/delivery/finish');
+                          },
                         ),
                       ],
                     ),

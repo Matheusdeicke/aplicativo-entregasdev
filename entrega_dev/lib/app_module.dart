@@ -9,5 +9,6 @@ class AppModule extends Module {
     r.module('/', module: LoginModule());
     r.module('/home', module: HomeModule());
     r.module('/delivery', module: DeliveryModule());
+    r.module('/delivery/finish', module: DeliveryModule());
   }
 }
