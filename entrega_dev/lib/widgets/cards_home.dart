@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 class CardHomeWidget extends StatelessWidget {
-  final IconData storeIcon;
-  final String storeName;
-  final String distance;
-  final String deliveryLocation;
-  final String address;
-  final String price;
+  final IconData lojaIcon;
+  final String lojaNome;
+  final String distancia;
+  final String localEntrega;
+  final String endereco;
+  final String preco;
   final VoidCallback onTap;
 
   const CardHomeWidget({
     super.key,
-    required this.storeIcon,
-    required this.storeName,
-    required this.distance,
-    required this.deliveryLocation,
-    required this.address,
-    required this.price,
+    required this.lojaIcon,
+    required this.lojaNome,
+    required this.distancia,
+    required this.localEntrega,
+    required this.endereco,
+    required this.preco,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final containerColor = Colors.grey[850];
-    final secondaryTextColor = Colors.grey[500];
-    final primaryTextColor = Colors.grey[100];
+    final containerCor = Colors.grey[850];
+    final primeiraCor = Colors.grey[100];
+    final segundaCor = Colors.grey[500];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -34,71 +34,71 @@ class CardHomeWidget extends StatelessWidget {
             width: 70,
             height: 70,
             decoration: BoxDecoration(
-              color: containerColor,
+              color: containerCor,
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: Icon(
-              storeIcon,
+              lojaIcon,
               color: Colors.green,
               size: 40,
             ),
           ),
-          const SizedBox(width: 16.0),
+          SizedBox(width: 16.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$storeName | $distance',
+                  '$lojaNome | $distancia',
                   style: TextStyle(
                     fontFamily: 'Figtree',
                     fontSize: 14,
-                    color: secondaryTextColor,
+                    color: segundaCor,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4.0),
+                SizedBox(height: 4.0),
                 Text(
-                  deliveryLocation,
+                  localEntrega,
                   style: TextStyle(
                     fontFamily: 'Figtree',
                     fontSize: 16,
-                    color: primaryTextColor,
+                    color: primeiraCor,
                     fontWeight: FontWeight.bold,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4.0),
+                SizedBox(height: 4.0),
                 Text(
-                  address,
+                  endereco,
                   style: TextStyle(
                     fontFamily: 'Figtree',
                     fontSize: 14,
-                    color: secondaryTextColor,
+                    color: segundaCor,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 8.0),
+                SizedBox(height: 8.0),
                 Text(
-                  price,
+                  preco,
                   style: TextStyle(
                     fontFamily: 'Figtree',
                     fontSize: 18,
-                    color: primaryTextColor,
+                    color: primeiraCor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 10.0),
+          SizedBox(width: 10.0),
           Container(
             decoration: BoxDecoration(
-              color: containerColor,
+              color: containerCor,
               borderRadius: BorderRadius.circular(8.0),
             ),
             child: IconButton(
-              icon: Icon(Icons.arrow_forward, color: primaryTextColor),
+              icon: Icon(Icons.arrow_forward, color: primeiraCor),
               onPressed: onTap,
               splashRadius: 20,
             ),

@@ -14,8 +14,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    final primaryTextColor = Colors.grey[300];
-    final secondaryTextColor = Colors.grey[500];
+    final primeiraCor = Colors.grey[300];
+    final segundaCor = Colors.grey[500];
 
     return Scaffold(
       backgroundColor: AppColors.preto,
@@ -24,11 +24,11 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 30.0),
+              padding: EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 30.0),
               child: Text(
                 'Olá, bem vindo João!',
                 style: TextStyle(
-                  color: primaryTextColor,
+                  color: primeiraCor,
                   fontFamily: 'Figtree',
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
             ),
 
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
+              padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'Entrega disponíveis',
                     style: TextStyle(
-                      color: primaryTextColor,
+                      color: primeiraCor,
                       fontFamily: 'Figtree',
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -65,15 +65,15 @@ class _HomePageState extends State<HomePage> {
                         Text(
                           'Finalizadas',
                           style: TextStyle(
-                            color: secondaryTextColor,
+                            color: segundaCor,
                             fontFamily: 'Figtree',
                             fontSize: 16,
                           ),
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         Icon(
                           Icons.arrow_forward,
-                          color: secondaryTextColor,
+                          color: segundaCor,
                           size: 16,
                         ),
                       ],
@@ -85,16 +85,16 @@ class _HomePageState extends State<HomePage> {
 
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.only(top: 10.0),
+                padding: EdgeInsets.only(top: 10.0),
                 itemCount: 1,
                 itemBuilder: (context, index) {
                   return CardHomeWidget(
-                    storeIcon: Icons.shopping_bag_outlined, 
-                    storeName: 'SUBWAY',
-                    distance: '8 km até a loja',
-                    deliveryLocation: 'Local de entrega - Centro',
-                    address: 'Rua 28 de Setembro, 120',
-                    price: 'R\$ 25,00',
+                    lojaIcon: Icons.shopping_bag_outlined, 
+                    lojaNome: 'SUBWAY',
+                    distancia: '8 km até a loja',
+                    localEntrega: 'Local de entrega - Centro',
+                    endereco: 'Rua 28 de Setembro, 120',
+                    preco: 'R\$ 25,00',
                     onTap: () {
                       Modular.to.navigate('/delivery');
                     },

@@ -1,18 +1,72 @@
+import 'package:entrega_dev/widgets/buttons_map.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
-class MapPage extends StatefulWidget {
+class MapPage extends StatelessWidget {
   const MapPage({super.key});
 
   @override
-  State<MapPage> createState() => _MapPageState();
-}
-
-class _MapPageState extends State<MapPage> {
-  @override
   Widget build(BuildContext context) {
+    final LatLng pontoInicial = LatLng(
+      -29.690077344166916,
+      -52.455172648394694,
+    );
     return Scaffold(
-      body: Center(
-        child: Text('Map Page'),
+      appBar: AppBar(title: const Text('Map Page')),
+
+      body: FlutterMap(
+        options: MapOptions(initialCenter: pontoInicial, initialZoom: 9.2),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName: 'dev.entrega_dev.app',
+          ),
+          MarkerLayer(
+            markers: [
+              Marker(
+                point: pontoInicial,
+                width: 80,
+                height: 80,
+                child: Icon(Icons.location_on, color: Colors.red, size: 40),
+              ),
+            ],
+          ),
+          RichAttributionWidget(
+            attributions: [TextSourceAttribution('Mapa Teste')],
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.transparent,
+        elevation: 0,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ButtonsMapWidget(
+                heroTag: 'cancelar_corrida',
+                onPressed: () {
+                  Modular.to.navigate('/home');
+                },
+                backgroundColor: Color.fromARGB(255, 88, 86, 86),
+                label: 'Cancelar Corrida',
+                icon: Icons.close,
+              ),
+              ButtonsMapWidget(
+                heroTag: 'iniciar_corrida',
+                onPressed: () {
+                  // Ação ao iniciar a corrida
+                },
+                backgroundColor: Colors.green,
+                label: 'Iniciar Corrida',
+                icon: Icons.check,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
