@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "511904374346",
+    "project_id": "flutter-entregadev",
+    "storage_bucket": "flutter-entregadev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:511904374346:android:23fe25c44ee3d3b77510b3",
+        "android_client_info": {
+          "package_name": "com.example.entrega_dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzavBkt7euoR78rkpw2EmBz_qHlcK9FxE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
