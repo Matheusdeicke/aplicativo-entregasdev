@@ -8,13 +8,11 @@ import 'package:flutter_modular/flutter_modular.dart';
 class LoginModule extends Module {
   @override
   void binds(i) {
-    i.addSingleton(() => FirebaseAuth.instance); 
-    i.add<AuthService>(AuthService.new); 
+    i.addSingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+    i.add<AuthService>(AuthService.new);
     i.add<LoginController>(LoginController.new);
   }
   
   @override
-  void routes(r) {
-    r.child('/', child: (_) => const LoginPage());
-  }
+  void routes(r) => r.child('/', child: (_) => const LoginPage());
 }

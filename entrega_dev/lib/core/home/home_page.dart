@@ -1,3 +1,4 @@
+import 'package:entrega_dev/core/home/home_controller.dart';
 import 'package:entrega_dev/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -12,6 +13,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  late final HomeController controller;
+  
+  @override
+  void initState() {
+    super.initState();
+    controller = Modular.get<HomeController>();
+    controller.loadUser(); 
+  }
+
   @override
   Widget build(BuildContext context) {
     final primeiraCor = Colors.grey[300];
@@ -26,7 +37,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 30.0),
               child: Text(
-                'Olá, bem vindo João!',
+                controller.welcomeMessage,
                 style: TextStyle(
                   color: primeiraCor,
                   fontFamily: 'Figtree',

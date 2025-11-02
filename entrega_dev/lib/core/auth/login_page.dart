@@ -11,11 +11,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final controller = Modular.get<LoginController>();
+  late final LoginController controller;
 
   @override
   void initState() {
     super.initState();
+    controller = Modular.get<LoginController>();
     controller.errorMessage.addListener(() {
       final error = controller.errorMessage.value;
       if (error != null && error.isNotEmpty) {
