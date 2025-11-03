@@ -1,4 +1,3 @@
-
 import 'package:entrega_dev/core/auth/auth_service.dart';
 import 'package:entrega_dev/core/auth/login_page.dart';
 import 'package:entrega_dev/core/auth/login_controller.dart';
@@ -12,7 +11,7 @@ class LoginModule extends Module {
     i.add<AuthService>(AuthService.new);
     i.add<LoginController>(LoginController.new);
   }
-  
+
   @override
   void routes(r) => r.child('/', child: (_) => const LoginPage());
 }

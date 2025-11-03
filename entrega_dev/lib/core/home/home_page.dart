@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrega_dev/core/home/home_controller.dart';
+import 'package:entrega_dev/core/models/delivery_model.dart';
 import 'package:entrega_dev/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-
 import 'package:entrega_dev/widgets/cards_home.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,8 +14,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final HomeController controller;
+  final _currency = NumberFormat.simpleCurrency(locale: 'pt_BR');
 
-  late final HomeController controller = Modular.get<HomeController>();
+  @override
+  void initState() {
+    super.initState();
+    controller = Modular.get<HomeController>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +35,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 30.0),
+              padding: const EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 30.0),
               child: Text(
                 controller.welcomeMessage,
                 style: TextStyle(
@@ -42,10 +48,12 @@ class _HomePageState extends State<HomePage> {
             ),
 
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 25.0,
+                vertical: 10.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     'Entregas disponíveis',
@@ -56,11 +64,8 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  
                   TextButton(
-                    onPressed: () {
-
-                    },
+                    onPressed: () => Modular.to.navigate('/delivery/finish'),
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -75,17 +80,8 @@ class _HomePageState extends State<HomePage> {
                             fontSize: 16,
                           ),
                         ),
-                        SizedBox(width: 4),
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_forward,
-                            color: segundaCor,
-                            size: 16,
-                          ),
-                          onPressed: () {
-                            Modular.to.navigate('/delivery/finish');
-                          },
-                        ),
+                        const SizedBox(width: 4),
+                        Icon(Icons.arrow_forward, color: segundaCor, size: 16),
                       ],
                     ),
                   ),
@@ -94,13 +90,11 @@ class _HomePageState extends State<HomePage> {
             ),
 
             Expanded(
-              child: StreamBuilder(
+              child: StreamBuilder<List<DeliveryModel>>(
                 stream: controller.entregasStream,
-                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator()
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
                     return Center(
@@ -114,8 +108,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                     );
                   }
-                  final docs = snapshot.data?.docs ?? [];
-                  if (docs.isEmpty) {
+
+                  final items = snapshot.data ?? const <DeliveryModel>[];
+                  if (items.isEmpty) {
                     return Center(
                       child: Text(
                         'Nenhuma entrega disponível',
@@ -126,36 +121,32 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     );
-                }
-            
-                return ListView.separated(
-                  padding: const EdgeInsets.only(top: 10.0, bottom: 16.0),
-                  itemCount: docs.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8.0),
-                  itemBuilder: (context, index) {
-                    final data = docs[index].data() as Map<String, dynamic>;
-                    final lojaIcon = (data['imagem'] as String?) ?? 'img';
-                    final lojaNome = (data['lojaNome'] as String?) ?? 'Loja';
-                    final distancia = (data['distancia'] as String?) ?? '-';
-                    final localEntrega = (data['localEntrega'] as String?) ?? '-';
-                    final enderecoLoja = (data['enderecoLoja'] as String?) ?? '-';
-                    final preco = (data['preco'] as num?)?.toStringAsFixed(2) ?? '0,00';
+                  }
 
-                    return CardHomeWidget(
-                      lojaIcon: Icons.shopping_bag_outlined,
-                      lojaNome: lojaNome,
-                      distancia: distancia,
-                      localEntrega: localEntrega,
-                      endereco: enderecoLoja,
-                      preco: 'R\$ $preco',
-                      onTap: () {
-                        Modular.to.navigate('/delivery', arguments: {
-                          'entregaId': docs[index].id,
-                        });
-                      },
-                    );
-                  },
-                );
+                  return ListView.separated(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 16.0),
+                    itemCount: items.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8.0),
+                    itemBuilder: (context, index) {
+                      final d = items[index];
+                      final precoFmt = _currency.format(d.preco);
+
+                      return CardHomeWidget(
+                        lojaIcon: Icons.shopping_bag_outlined,
+                        lojaNome: d.lojaNome,
+                        distancia: d.distancia,
+                        localEntrega: d.localEntrega,
+                        endereco: d.enderecoLoja,
+                        preco: precoFmt,
+                        onTap: () {
+                          Modular.to.pushNamed(
+                            '/map',
+                            arguments: {'entregaId': d.id},
+                          );
+                        },
+                      );
+                    },
+                  );
                 },
               ),
             ),

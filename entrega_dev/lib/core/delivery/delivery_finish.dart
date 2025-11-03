@@ -12,9 +12,7 @@ class _DeliveryFinishState extends State<DeliveryFinish> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Delivery Finish'),
-      ),
+      appBar: AppBar(title: const Text('Delivery Finish')),
       body: Center(
         child: TextButton(
           onPressed: () {
@@ -23,7 +21,6 @@ class _DeliveryFinishState extends State<DeliveryFinish> {
           child: const Text('Voltar para Home'),
         ),
       ),
-
     );
   }
 }

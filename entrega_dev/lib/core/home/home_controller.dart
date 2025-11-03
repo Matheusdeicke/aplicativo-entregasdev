@@ -1,28 +1,23 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:entrega_dev/core/models/delivery_model.dart';
+import 'package:entrega_dev/core/services/delivery_service.dart';
 
 class HomeController {
   final FirebaseAuth _auth;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
+  final DeliveryService _deliveryService;
+
   late final String welcomeMessage;
-  late final Stream<QuerySnapshot> entregasStream;
+  late final Stream<List<DeliveryModel>> entregasStream;
 
-  HomeController(this._auth) {
+  HomeController(this._auth, this._deliveryService) {
+    _init();
+  }
+
+  void _init() {
     final user = _auth.currentUser;
-    String username = 'Usuário';
-
-    if (user != null && user.email != null) {
-      username = user.email!.split('@').first;
-    }
-    
+    final username = (user?.email?.split('@').first) ?? 'Usuário';
     welcomeMessage = 'Olá, bem vindo $username!';
 
-    entregasStream = _firestore
-        .collection('entregasteste')
-        // .where('status', isEqualTo: 'pendente')
-        // .orderBy('criadoEm', descending: false)
-        .snapshots();
+    entregasStream = _deliveryService.getAvailableDeliveries();
   }
 }
