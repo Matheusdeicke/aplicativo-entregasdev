@@ -14,10 +14,7 @@ class MapPage extends StatelessWidget {
       -52.455172648394694,
     );
 
-    final LatLng pontoEntrega = LatLng(
-      -29.70307487982785, 
-      -52.44509055525976
-    );
+    final LatLng pontoEntrega = LatLng(-29.70307487982785, -52.44509055525976);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Map Page')),
@@ -26,7 +23,8 @@ class MapPage extends StatelessWidget {
         options: MapOptions(initialCenter: pontoInicial, initialZoom: 13.8),
         children: [
           TileLayer(
-            urlTemplate: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+            urlTemplate:
+                'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
             subdomains: ['a', 'b', 'c', 'd'],
             userAgentPackageName: 'dev.entrega_dev.app',
           ),
@@ -48,11 +46,15 @@ class MapPage extends StatelessWidget {
                 child: Icon(Icons.location_on, color: Colors.red, size: 40),
               ),
               Marker(
-                point: pontoEntrega, 
+                point: pontoEntrega,
                 width: 80,
                 height: 80,
-                child: Icon(Icons.location_on, color: const Color.fromARGB(255, 60, 255, 0), size: 40)
-              ,)
+                child: Icon(
+                  Icons.location_on,
+                  color: const Color.fromARGB(255, 60, 255, 0),
+                  size: 40,
+                ),
+              ),
             ],
           ),
 
@@ -61,8 +63,8 @@ class MapPage extends StatelessWidget {
           ),
         ],
       ),
+      // VERIFICAR PQ TEM UM FUNDO BRANCO NOS BOTOES, ERA PRA ELE SOBREPOR NO MAPA
       bottomNavigationBar: BottomAppBar(
-        color: Colors.transparent,
         elevation: 0,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
