@@ -13,15 +13,30 @@ class MapPage extends StatelessWidget {
       -29.690077344166916,
       -52.455172648394694,
     );
+
+    final LatLng pontoEntrega = LatLng(
+      -29.70307487982785, 
+      -52.44509055525976
+    );
+
     return Scaffold(
       appBar: AppBar(title: const Text('Map Page')),
 
       body: FlutterMap(
-        options: MapOptions(initialCenter: pontoInicial, initialZoom: 9.2),
+        options: MapOptions(initialCenter: pontoInicial, initialZoom: 13.8),
         children: [
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'dev.entrega_dev.app',
+          ),
+          PolylineLayer(
+            polylines: [
+              Polyline(
+                points: [pontoInicial, pontoEntrega],
+                color: Colors.black,
+                strokeWidth: 5.0,
+              ),
+            ],
           ),
           MarkerLayer(
             markers: [
@@ -31,8 +46,15 @@ class MapPage extends StatelessWidget {
                 height: 80,
                 child: Icon(Icons.location_on, color: Colors.red, size: 40),
               ),
+              Marker(
+                point: pontoEntrega, 
+                width: 80,
+                height: 80,
+                child: Icon(Icons.location_on, color: const Color.fromARGB(255, 60, 255, 0), size: 40)
+              ,)
             ],
           ),
+
           RichAttributionWidget(
             attributions: [TextSourceAttribution('Mapa Teste')],
           ),
