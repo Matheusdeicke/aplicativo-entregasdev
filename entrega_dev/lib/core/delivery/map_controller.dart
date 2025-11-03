@@ -17,12 +17,12 @@ class MapController {
   Future<void> confirmarColeta() async {
     if (entregaId.isEmpty) return;
     await _service
-        .updateStatus(entregaId: entregaId, novoStatus: 'em_coleta'); // opcional
+        .updateStatus(entregaId: entregaId, novoStatus: 'em_coleta');
   }
 
   Future<void> cancelarCorrida() async {
     if (entregaId.isEmpty) return;
     await _service
-        .updateStatus(entregaId: entregaId, novoStatus: 'cancelada'); // opcional
+        .updateStatus(entregaId: entregaId, novoStatus: 'cancelada');
   }
 }
