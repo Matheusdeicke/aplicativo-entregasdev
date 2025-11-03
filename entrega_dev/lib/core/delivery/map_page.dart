@@ -26,14 +26,15 @@ class MapPage extends StatelessWidget {
         options: MapOptions(initialCenter: pontoInicial, initialZoom: 13.8),
         children: [
           TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            urlTemplate: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+            subdomains: ['a', 'b', 'c', 'd'],
             userAgentPackageName: 'dev.entrega_dev.app',
           ),
           PolylineLayer(
             polylines: [
               Polyline(
                 points: [pontoInicial, pontoEntrega],
-                color: Colors.black,
+                color: const Color.fromARGB(255, 119, 118, 118),
                 strokeWidth: 5.0,
               ),
             ],
