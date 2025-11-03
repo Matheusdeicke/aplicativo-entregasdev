@@ -1,13 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 
 class HomeController {
   final FirebaseAuth _auth;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   
-  HomeController(this._auth);
-
   late final String welcomeMessage;
+  late final Stream<QuerySnapshot> entregasStream;
 
-  void loadUser() {
+  HomeController(this._auth) {
     final user = _auth.currentUser;
     String username = 'Usuário';
 
@@ -16,5 +18,11 @@ class HomeController {
     }
     
     welcomeMessage = 'Olá, bem vindo $username!';
+
+    entregasStream = _firestore
+        .collection('entregasteste')
+        // .where('status', isEqualTo: 'pendente')
+        // .orderBy('criadoEm', descending: false)
+        .snapshots();
   }
 }

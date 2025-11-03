@@ -7,7 +7,7 @@ class HomeModule extends Module {
   @override
   void binds(i) {
     i.addSingleton<FirebaseAuth>(() => FirebaseAuth.instance);
-    i.add<HomeController>(HomeController.new);
+    i.addLazySingleton<HomeController>(HomeController.new);
   }
   
   @override

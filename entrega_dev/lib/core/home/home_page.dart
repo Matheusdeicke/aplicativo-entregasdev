@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrega_dev/core/home/home_controller.dart';
 import 'package:entrega_dev/theme/colors.dart';
 import 'package:flutter/material.dart';
@@ -14,14 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  late final HomeController controller;
-  
-  @override
-  void initState() {
-    super.initState();
-    controller = Modular.get<HomeController>();
-    controller.loadUser(); 
-  }
+  late final HomeController controller = Modular.get<HomeController>();
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +48,7 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Entrega disponíveis',
+                    'Entregas disponíveis',
                     style: TextStyle(
                       color: primeiraCor,
                       fontFamily: 'Figtree',
@@ -100,21 +94,68 @@ class _HomePageState extends State<HomePage> {
             ),
 
             Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.only(top: 10.0),
-                itemCount: 1,
-                itemBuilder: (context, index) {
-                  return CardHomeWidget(
-                    lojaIcon: Icons.shopping_bag_outlined, 
-                    lojaNome: 'SUBWAY',
-                    distancia: '8 km até a loja',
-                    localEntrega: 'Local de entrega - Centro',
-                    endereco: 'Rua 28 de Setembro, 120',
-                    preco: 'R\$ 25,00',
-                    onTap: () {
-                      Modular.to.navigate('/delivery');
-                    },
-                  );
+              child: StreamBuilder(
+                stream: controller.entregasStream,
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator()
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Erro ao carregar entregas',
+                        style: TextStyle(
+                          color: segundaCor,
+                          fontFamily: 'Figtree',
+                          fontSize: 16,
+                        ),
+                      ),
+                    );
+                  }
+                  final docs = snapshot.data?.docs ?? [];
+                  if (docs.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'Nenhuma entrega disponível',
+                        style: TextStyle(
+                          color: segundaCor,
+                          fontFamily: 'Figtree',
+                          fontSize: 16,
+                        ),
+                      ),
+                    );
+                }
+            
+                return ListView.separated(
+                  padding: const EdgeInsets.only(top: 10.0, bottom: 16.0),
+                  itemCount: docs.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8.0),
+                  itemBuilder: (context, index) {
+                    final data = docs[index].data() as Map<String, dynamic>;
+                    final lojaIcon = (data['imagem'] as String?) ?? 'img';
+                    final lojaNome = (data['lojaNome'] as String?) ?? 'Loja';
+                    final distancia = (data['distancia'] as String?) ?? '-';
+                    final localEntrega = (data['localEntrega'] as String?) ?? '-';
+                    final enderecoLoja = (data['enderecoLoja'] as String?) ?? '-';
+                    final preco = (data['preco'] as num?)?.toStringAsFixed(2) ?? '0,00';
+
+                    return CardHomeWidget(
+                      lojaIcon: Icons.shopping_bag_outlined,
+                      lojaNome: lojaNome,
+                      distancia: distancia,
+                      localEntrega: localEntrega,
+                      endereco: enderecoLoja,
+                      preco: 'R\$ $preco',
+                      onTap: () {
+                        Modular.to.navigate('/delivery', arguments: {
+                          'entregaId': docs[index].id,
+                        });
+                      },
+                    );
+                  },
+                );
                 },
               ),
             ),
