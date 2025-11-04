@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:entrega_dev/core/delivery/map_controller.dart' as ctrl;
+import 'package:entrega_dev/core/map/map_controller.dart' as ctrl;
 import 'package:entrega_dev/core/models/delivery_model.dart' as model;
 
 class MapPage extends StatefulWidget {
@@ -231,7 +231,7 @@ class _MapPageState extends State<MapPage> {
                                 width: 80,
                                 height: 80,
                                 child: const Icon(Icons.store,
-                                    color: Colors.red, size: 40),
+                                    color: Color.fromARGB(255, 255, 17, 0), size: 40),
                               ),
                             if (destino != null)
                               Marker(
@@ -239,7 +239,7 @@ class _MapPageState extends State<MapPage> {
                                 width: 80,
                                 height: 80,
                                 child: const Icon(Icons.location_on,
-                                    color: Color.fromARGB(255, 60, 255, 0),
+                                    color: Color.fromARGB(255, 255, 0, 0),
                                     size: 40),
                               ),
                           ],
@@ -282,7 +282,7 @@ class _MapPageState extends State<MapPage> {
                                   await _controller.confirmarColeta();
                                 },
                                 backgroundColor:
-                                    Colors.green.withOpacity(0.9),
+                                    const Color.fromARGB(255, 0, 0, 0).withOpacity(0.9),
                                 label: 'Confirmar coleta',
                                 icon: Icons.check,
                               ),

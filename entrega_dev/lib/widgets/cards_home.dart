@@ -37,6 +37,7 @@ class CardHomeWidget extends StatelessWidget {
               color: containerCor,
               borderRadius: BorderRadius.circular(12.0),
             ),
+            clipBehavior: Clip.antiAlias,
             child: Icon(
               lojaIcon,
               color: Colors.green,
