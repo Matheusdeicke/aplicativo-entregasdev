@@ -9,6 +9,10 @@ class HomeController {
   late final String welcomeMessage;
   late final Stream<List<DeliveryModel>> entregasStream;
 
+  ////////////// FAZER NO DELIVERY CONTROLLER //////////////
+  late final Stream<List<DeliveryModel>> entregasFinalizadasStream;
+  //////////////////////////////////////////////////////////
+
   HomeController(this._auth, this._deliveryService) {
     _init();
   }
@@ -19,5 +23,8 @@ class HomeController {
     welcomeMessage = 'Olá, bem vindo $username!';
 
     entregasStream = _deliveryService.getAvailableDeliveries();
+    ////// ISSO NAO DEVE SER AQUI, DEVE SER EM UM DELIVERY_CONTROLLER //////
+    entregasFinalizadasStream = _deliveryService.getFinishDeliveries();
+    ///////////////////////////////////////////////////////////////////////
   }
 }

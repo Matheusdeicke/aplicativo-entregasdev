@@ -17,7 +17,7 @@ class MapController {
   Future<void> confirmarColeta() async {
     if (entregaId.isEmpty) return;
     await _service
-        .updateStatus(entregaId: entregaId, novoStatus: 'confirmado');
+        .updateStatus(entregaId: entregaId, novoStatus: 'confirmada');
   }
 
   Future<void> cancelarCorrida() async {

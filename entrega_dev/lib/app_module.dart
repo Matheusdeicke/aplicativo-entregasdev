@@ -12,6 +12,7 @@ class AppModule extends Module {
   void binds(i) {
     i.addSingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
     i.addLazySingleton<DeliveryService>(DeliveryService.new);
+    
   }
 
   @override

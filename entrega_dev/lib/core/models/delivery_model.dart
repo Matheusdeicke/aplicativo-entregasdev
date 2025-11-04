@@ -7,6 +7,7 @@ class DeliveryModel {
   final String distancia;
   final String localEntrega;
   final String enderecoLoja;
+  final String status;
   final double preco;
   final String? imagem;
   final LatLng? localizacao;        
@@ -17,6 +18,7 @@ class DeliveryModel {
     required this.lojaNome,
     required this.distancia,
     required this.localEntrega,
+    required this.status,
     required this.enderecoLoja,
     required this.preco,
     this.imagem,
@@ -35,6 +37,7 @@ class DeliveryModel {
       lojaNome: (data['lojaNome'] ?? '') as String,
       distancia: (data['distancia'] ?? '') as String,
       localEntrega: (data['localEntrega'] ?? '') as String,
+      status: (data['status'] ?? '') as String,
       enderecoLoja: (data['enderecoLoja'] ?? '') as String,
       preco: (data['preco'] is num) ? (data['preco'] as num).toDouble() : 0.0,
       imagem: data['imagem'] as String?,

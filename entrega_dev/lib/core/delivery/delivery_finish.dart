@@ -1,4 +1,7 @@
+import 'package:entrega_dev/core/home/home_controller.dart';
+import 'package:entrega_dev/core/models/delivery_model.dart';
 import 'package:entrega_dev/theme/colors.dart';
+import 'package:entrega_dev/widgets/cards_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -10,6 +13,15 @@ class DeliveryFinish extends StatefulWidget {
 }
 
 class _DeliveryFinishState extends State<DeliveryFinish> {
+  //////////// ARRUMAR DAQUI PRA BAIXO ////////////
+  late final HomeController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Modular.get<HomeController>();
+  }
+//////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
     final primeiraCor = Colors.grey[300];
@@ -72,6 +84,69 @@ class _DeliveryFinishState extends State<DeliveryFinish> {
                 ),
               ],
             ),
+
+            ////////////////// ARRUMAR DAQUI PRA BAIXO ////////////////////
+            Expanded(
+              child: StreamBuilder<List<DeliveryModel>>(
+                stream: controller.entregasFinalizadasStream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Erro ao carregar entregas finalizadas',
+                        style: TextStyle(
+                          color: segundaCor,
+                          fontFamily: 'Figtree',
+                          fontSize: 16,
+                        ),
+                      ),
+                    );
+                  }
+
+                  final items = snapshot.data ?? const <DeliveryModel>[];
+                  if (items.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'Nenhuma entrega finalizada',
+                        style: TextStyle(
+                          color: segundaCor,
+                          fontFamily: 'Figtree',
+                          fontSize: 16,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return ListView.separated(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 16.0),
+                    itemCount: items.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8.0),
+                    itemBuilder: (context, index) {
+                      final d = items[index];
+
+                      return CardHomeWidget(
+                        lojaIcon: Icons.shopping_bag_outlined,
+                        lojaNome: d.lojaNome,
+                        distancia: d.distancia,
+                        localEntrega: d.localEntrega,
+                        endereco: d.enderecoLoja,
+                        preco: '',
+                        onTap: () {
+                          Modular.to.pushNamed(
+                            '/map',
+                            arguments: {'entregaId': d.id},
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            //////////////////////////////////////////////////
           ],
         ),
       ),
