@@ -1,6 +1,8 @@
+import 'package:entrega_dev/core/delivery/services/delivery_service.dart';
 import 'package:entrega_dev/core/home/home_controller.dart';
-import 'package:entrega_dev/core/models/delivery_model.dart';
+import 'package:entrega_dev/core/delivery/models/delivery_model.dart';
 import 'package:entrega_dev/theme/colors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:entrega_dev/widgets/cards_home.dart';
@@ -47,7 +49,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            
+
             // Mensagem de entregas disponiveis e botão para acessar entregas finalizadas
             Padding(
               padding: const EdgeInsets.symmetric(
@@ -134,19 +136,67 @@ class _HomePageState extends State<HomePage> {
                       final d = items[index];
                       final precoFmt = _currency.format(d.preco);
 
+                      final auth = Modular.get<FirebaseAuth>();
+                      final uid = auth.currentUser?.uid;
+
+                      final isAccepted = d.status == 'aceita';
+                      final acceptedByMe = isAccepted && d.acceptedBy == uid;
+                      final acceptedByOther =
+                          isAccepted &&
+                          d.acceptedBy != null &&
+                          d.acceptedBy != uid;
+
+                      final disabled = acceptedByOther;
+                      final badgeText = acceptedByMe
+                          ? 'Aceita por você'
+                          : (acceptedByOther ? 'Reservado' : null);
+
+                      VoidCallback? onTap;
+                      if (!disabled) {
+                        onTap = () async {
+                          if (uid == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Faça login para aceitar a entrega',
+                                ),
+                              ),
+                            );
+                            return;
+                          }
+
+                          final service = Modular.get<DeliveryService>();
+                          try {
+                            if (!acceptedByMe) {
+                              await service.acceptDelivery(
+                                entregaId: d.id,
+                                uid: uid,
+                              );
+                            }
+                            Modular.to.pushNamed(
+                              '/map',
+                              arguments: {'entregaId': d.id},
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())),
+                            );
+                          }
+                        };
+                      }
+
                       return CardHomeWidget(
-                        lojaIcon: Icons.shopping_bag_outlined,
+                        lojaImagem: d.imagem,
                         lojaNome: d.lojaNome,
                         distancia: d.distancia,
                         localEntrega: d.localEntrega,
                         endereco: d.enderecoLoja,
                         preco: precoFmt,
-                        onTap: () {
-                          Modular.to.pushNamed(
-                            '/map',
-                            arguments: {'entregaId': d.id},
-                          );
-                        },
+                        onTap: onTap,
+                        disabled:
+                            disabled,
+                        badgeText:
+                            badgeText,
                       );
                     },
                   );

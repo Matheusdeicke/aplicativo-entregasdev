@@ -1,136 +1,139 @@
-import 'dart:math';
+import 'dart:async';
 import 'package:entrega_dev/widgets/buttons_map.dart';
+import 'package:entrega_dev/widgets/delivery_header.dart';
+import 'package:entrega_dev/widgets/map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:entrega_dev/core/map/map_controller.dart' as ctrl;
-import 'package:entrega_dev/core/models/delivery_model.dart' as model;
+import 'package:entrega_dev/core/delivery/models/delivery_model.dart' as model;
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
-
   @override
   State<MapPage> createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> {
-  final _mapController = MapController();
   late final ctrl.MapController _controller;
+  // bool _isRunning = false;
 
-  static const LatLng _fallbackCenter =
-      LatLng(-29.690077344166916, -52.455172648394694);
+  static const LatLng _fallbackCenter = LatLng(
+    -29.690077344166916,
+    -52.455172648394694,
+  );
   static const double _zoom = 13.8;
+
+  // localização do entregador
+  StreamSubscription<Position>? _posSub;
+  LatLng? _driver;
+  String? _locError;
+
+  // distância/ETA
+  final _dist = const Distance();
+  static const _avgSpeedKmh = 24.0;
 
   @override
   void initState() {
     super.initState();
     _controller = Modular.get<ctrl.MapController>();
+    _initLocationStream();
   }
 
-  void _center(LatLng c) => _mapController.move(c, _zoom);
-
-  double? _extractKm(String? s) {
-    if (s == null) return null;
-    final m = RegExp(r'(\d+(?:[.,]\d+)?)').firstMatch(s);
-    if (m == null) return null;
-    return double.tryParse(m.group(1)!.replaceAll(',', '.'));
+  @override
+  void dispose() {
+    _posSub?.cancel();
+    super.dispose();
   }
 
-  String _estimativaMinutos(String? distanciaRaw) {
-    final km = _extractKm(distanciaRaw);
+  Future<void> _initLocationStream() async {
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // verificação
+      if (mounted) {
+        setState(
+          () => _locError = 'Serviço de localização desativado. Ative o GPS.',
+        );
+      }
+      return;
+    }
+
+    var perm = await Geolocator.checkPermission();
+    if (perm == LocationPermission.denied) {
+      perm = await Geolocator.requestPermission();
+    }
+    if (perm == LocationPermission.denied) {
+      // verificação
+      if (mounted) {
+        setState(() => _locError = 'Permissão de localização negada.');
+      }
+      return;
+    }
+    if (perm == LocationPermission.deniedForever) {
+      // verificação
+      if (mounted) {
+        setState(
+          () => _locError =
+              'Permissão negada permanentemente. Vá em Ajustes > Apps > Permissões.',
+        );
+      }
+      return;
+    }
+
+    try {
+      final p = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best,
+      );
+      // verificação
+      if (mounted) {
+        setState(() {
+          _driver = LatLng(p.latitude, p.longitude);
+          _locError = null;
+        });
+      }
+    } catch (_) {
+      // verificação
+      if (mounted) {
+        setState(
+          () => _locError = 'Não foi possível obter a localização inicial.',
+        );
+      }
+    }
+
+    _posSub = Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.bestForNavigation,
+            distanceFilter: 5, // atualiza a cada 5metros
+          ),
+        ).listen((pos) {
+          if (mounted) {
+            setState(() {
+              _driver = LatLng(pos.latitude, pos.longitude);
+            });
+          }
+        });
+  }
+
+  // distância/ETA em tempo real
+  double? _kmBetween(LatLng? a, LatLng? b) {
+    if (a == null || b == null) return null;
+    return _dist.as(LengthUnit.Kilometer, a, b);
+  }
+
+  int? _etaMinutes(double? km) {
+    if (km == null) return null;
+    final minutes = (km / _avgSpeedKmh) * 60.0;
+    return minutes.clamp(1, double.infinity).round();
+  }
+
+  String _fmtKm(double? km) {
     if (km == null) return '--';
-    final mins = (km * 2.5);
-    final arred = max(1, mins.round());
-    return '$arred minutos';
+    final decimals = km < 10 ? 2 : 1;
+    return '${km.toStringAsFixed(decimals).replaceAll('.', ',')} km';
   }
 
-  Widget _deliveryHeader(model.DeliveryModel e) {
-    final distancia = e.distancia;
-    final estimativa = _estimativaMinutos(distancia);
-    final destinoLinha1 = e.localEntrega ?? e.enderecoLoja ?? '';
-
-    return Container(
-      color: const Color(0xFF121212),
-      padding: const EdgeInsets.fromLTRB(16, 64, 16, 16),
-      width: double.infinity,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: const Color(0xFF1F1F1F),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: (e.imagem != null && e.imagem!.isNotEmpty)
-                ? Image.network(e.imagem!, fit: BoxFit.cover)
-                : const Icon(Icons.local_shipping, color: Colors.white70),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        e.lojaNome,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    if (distancia != null) ...[
-                      const SizedBox(width: 8),
-                      Text(
-                        distancia,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Local de entrega',
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                  ),
-                ),
-                Text(
-                  destinoLinha1,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  '$estimativa até o local',
-                  style: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
+  String _fmtMin(int? m) => m == null ? '--' : '$m min';
 
   Widget _bigCenterTitle(String distancia, String estimativa) {
     return IgnorePointer(
@@ -168,95 +171,79 @@ class _MapPageState extends State<MapPage> {
       body: StreamBuilder<model.DeliveryModel?>(
         stream: _controller.entrega$,
         builder: (context, snapshot) {
-          final entrega = snapshot.data;
-          final origem = entrega?.localizacao;
-          final destino = entrega?.localizacaoEntrega;
+          final e = snapshot.data;
 
-          final center = (origem != null && destino != null)
+          final loja = e?.localizacao;
+
+          final origem = _driver;
+
+          final center = (origem != null && loja != null)
               ? LatLng(
-                  (origem.latitude + destino.latitude) / 2,
-                  (origem.longitude + destino.longitude) / 2,
+                  (origem.latitude + loja.latitude) / 2,
+                  (origem.longitude + loja.longitude) / 2,
                 )
-              : (origem ?? destino ?? _fallbackCenter);
-
-          WidgetsBinding.instance.addPostFrameCallback((_) => _center(center));
+              : (origem ?? loja ?? _fallbackCenter);
 
           final poly = <LatLng>[
             if (origem != null) origem,
-            if (destino != null) destino,
+            if (loja != null) loja,
           ];
 
-          final distanciaTxt = entrega?.distancia ?? '--';
-          final estimativa = _estimativaMinutos(entrega?.distancia);
+          final km = _kmBetween(origem, loja);
+          final etaMin = _etaMinutes(km);
+          final distanciaTxt = _fmtKm(km);
+          final etaTxt = _fmtMin(etaMin);
 
           return Column(
             children: [
-              if (entrega != null)
-                _deliveryHeader(entrega)
+              if (e != null)
+                DeliveryHeader(
+                  imageUrl: e.imagem,
+                  title: e.lojaNome,
+                  subtitle: 'Local de retirada',
+                  addressLine: e.enderecoLoja,
+                  distanceText: distanciaTxt,
+                  etaText: '$etaTxt até o local',
+                )
               else
                 const SizedBox(height: 100),
+
+              if (_locError != null)
+                Container(
+                  width: double.infinity,
+                  color: const Color(0xFF2A2A2A),
+                  padding: const EdgeInsets.all(12),
+                  child: Text(
+                    _locError!,
+                    style: const TextStyle(
+                      color: Colors.orangeAccent,
+                      fontSize: 13,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
 
               Expanded(
                 child: Stack(
                   children: [
-                    FlutterMap(
-                      mapController: _mapController,
-                      options: const MapOptions(
-                        initialCenter: _fallbackCenter,
-                        initialZoom: _zoom,
-                      ),
-                      children: [
-                        TileLayer(
-                          urlTemplate:
-                              'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-                          subdomains: const ['a', 'b', 'c', 'd'],
-                          userAgentPackageName: 'dev.entrega_dev.app',
-                        ),
-                        if (poly.length == 2)
-                          PolylineLayer(
-                            polylines: [
-                              Polyline(
-                                points: poly,
-                                color:
-                                    const Color.fromARGB(255, 119, 118, 118),
-                                strokeWidth: 5,
-                              ),
-                            ],
-                          ),
-                        MarkerLayer(
-                          markers: [
-                            if (origem != null)
-                              Marker(
-                                point: origem,
-                                width: 80,
-                                height: 80,
-                                child: const Icon(Icons.store,
-                                    color: Color.fromARGB(255, 255, 17, 0), size: 40),
-                              ),
-                            if (destino != null)
-                              Marker(
-                                point: destino,
-                                width: 80,
-                                height: 80,
-                                child: const Icon(Icons.location_on,
-                                    color: Color.fromARGB(255, 255, 0, 0),
-                                    size: 40),
-                              ),
-                          ],
-                        ),
-                        const RichAttributionWidget(
-                          attributions: [TextSourceAttribution('Mapa Teste')],
-                        ),
-                      ],
+                    MapView(
+                      initialCenter: _fallbackCenter,
+                      initialZoom: _zoom,
+                      centerOnBuild: center,
+                      polyline: poly,
+                      origemMarker: origem,
+                      destinoMarker: loja,
                     ),
-                    if (entrega != null)
+
+                    if (e != null)
                       Align(
                         alignment: Alignment.topCenter,
                         child: Padding(
                           padding: const EdgeInsets.only(top: 12),
-                          child: _bigCenterTitle(distanciaTxt, estimativa),
+                          child: _bigCenterTitle(distanciaTxt, etaTxt),
                         ),
                       ),
+
                     SafeArea(
                       child: Align(
                         alignment: Alignment.bottomCenter,
@@ -271,18 +258,37 @@ class _MapPageState extends State<MapPage> {
                                   await _controller.cancelarCorrida();
                                   Modular.to.navigate('/home');
                                 },
-                                backgroundColor:
-                                    const Color.fromARGB(200, 88, 86, 86),
+                                backgroundColor: const Color.fromARGB(
+                                  200,
+                                  88,
+                                  86,
+                                  86,
+                                ),
                                 label: 'Cancelar Corrida',
                                 icon: Icons.close,
                               ),
                               ButtonsMapWidget(
                                 heroTag: 'iniciar_corrida',
                                 onPressed: () async {
+                                  try {
+                                    await _controller.aceitarEntrega();
+                                  } catch (_) {}
+
                                   await _controller.confirmarColeta();
+
+                                  Modular.to.navigate(
+                                    '/map/entrega',
+                                    arguments: {
+                                      'entregaId': _controller.currentEntregaId,
+                                    },
+                                  );
                                 },
-                                backgroundColor:
-                                    const Color.fromARGB(255, 0, 0, 0).withOpacity(0.9),
+                                backgroundColor: const Color.fromARGB(
+                                  255,
+                                  0,
+                                  0,
+                                  0,
+                                ).withOpacity(0.9),
                                 label: 'Confirmar coleta',
                                 icon: Icons.check,
                               ),

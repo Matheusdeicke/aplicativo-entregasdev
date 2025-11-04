@@ -1,5 +1,5 @@
-import 'package:entrega_dev/core/home/home_controller.dart';
-import 'package:entrega_dev/core/models/delivery_model.dart';
+import 'package:entrega_dev/core/delivery/delivery_controller.dart';
+import 'package:entrega_dev/core/delivery/models/delivery_model.dart';
 import 'package:entrega_dev/theme/colors.dart';
 import 'package:entrega_dev/widgets/cards_home.dart';
 import 'package:flutter/material.dart';
@@ -13,15 +13,19 @@ class DeliveryFinish extends StatefulWidget {
 }
 
 class _DeliveryFinishState extends State<DeliveryFinish> {
-  //////////// ARRUMAR DAQUI PRA BAIXO ////////////
-  late final HomeController controller;
+  late final DeliveryController controller;
 
   @override
   void initState() {
     super.initState();
-    controller = Modular.get<HomeController>();
+    controller = Modular.get<DeliveryController>();
   }
-//////////////////////////////////////////////////
+
+  String _formatBRL(num value) {
+    final str = value.toStringAsFixed(2).replaceAll('.', ',');
+    return 'R\$ $str';
+  }
+
   @override
   Widget build(BuildContext context) {
     final primeiraCor = Colors.grey[300];
@@ -38,7 +42,7 @@ class _DeliveryFinishState extends State<DeliveryFinish> {
               child: Row(
                 children: [
                   Icon(Icons.arrow_back, color: segundaCor, size: 16),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Text(
                     'Voltar para a tela de entregas',
                     style: TextStyle(
@@ -62,30 +66,40 @@ class _DeliveryFinishState extends State<DeliveryFinish> {
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Ganhos Totais',
-                  style: TextStyle(
-                    color: segundaCor,
-                    fontFamily: 'Figtree',
-                    fontSize: 24,
-                  ),
-                ),
-                SizedBox(width: 40),
-                Text(
-                  'R\$ 50',
-                  style: TextStyle(
-                    color: segundaCor,
-                    fontFamily: 'Figtree',
-                    fontSize: 24,
-                  ),
-                ),
-              ],
+
+            // Ganhos totais
+            StreamBuilder<double>(
+              stream: controller.totalGanhosStream,
+              builder: (context, snap) {
+                final total = snap.data ?? 0.0;
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Ganhos Totais',
+                      style: TextStyle(
+                        color: segundaCor,
+                        fontFamily: 'Figtree',
+                        fontSize: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 40),
+                    Text(
+                      _formatBRL(total),
+                      style: TextStyle(
+                        color: segundaCor,
+                        fontFamily: 'Figtree',
+                        fontSize: 24,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
 
-            ////////////////// ARRUMAR DAQUI PRA BAIXO ////////////////////
+            const SizedBox(height: 8),
+
+            // Lista de finalizadas
             Expanded(
               child: StreamBuilder<List<DeliveryModel>>(
                 stream: controller.entregasFinalizadasStream,
@@ -128,25 +142,19 @@ class _DeliveryFinishState extends State<DeliveryFinish> {
                       final d = items[index];
 
                       return CardHomeWidget(
+                        lojaImagem: d.imagem,
                         lojaIcon: Icons.shopping_bag_outlined,
                         lojaNome: d.lojaNome,
                         distancia: d.distancia,
                         localEntrega: d.localEntrega,
                         endereco: d.enderecoLoja,
-                        preco: '',
-                        onTap: () {
-                          Modular.to.pushNamed(
-                            '/map',
-                            arguments: {'entregaId': d.id},
-                          );
-                        },
+                        preco: _formatBRL(d.preco),
                       );
                     },
                   );
                 },
               ),
             ),
-            //////////////////////////////////////////////////
           ],
         ),
       ),

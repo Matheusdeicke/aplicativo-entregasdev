@@ -12,6 +12,8 @@ class DeliveryModel {
   final String? imagem;
   final LatLng? localizacao;        
   final LatLng? localizacaoEntrega; 
+  final String? acceptedBy;
+
 
   DeliveryModel({
     required this.id,
@@ -24,6 +26,7 @@ class DeliveryModel {
     this.imagem,
     this.localizacao,
     this.localizacaoEntrega,
+    this.acceptedBy,
   });
 
   factory DeliveryModel.fromMap(String id, Map<String, dynamic> data) {
@@ -43,6 +46,7 @@ class DeliveryModel {
       imagem: data['imagem'] as String?,
       localizacao: _gp(data['localizacao']),
       localizacaoEntrega: _gp(data['localizacaoEntrega']),
+      acceptedBy: data['acceptedBy'] as String?,
     );
   }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:entrega_dev/core/models/delivery_model.dart';
-import 'package:entrega_dev/core/services/delivery_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:entrega_dev/core/delivery/models/delivery_model.dart';
+import 'package:entrega_dev/core/delivery/services/delivery_service.dart';
 
 class MapController {
   final DeliveryService _service;
+  final FirebaseAuth _auth = Modular.get<FirebaseAuth>();
 
   late final String entregaId;
   late final Stream<DeliveryModel?> entrega$;
@@ -11,18 +13,35 @@ class MapController {
   MapController(this._service) {
     final args = Modular.args.data as Map<String, dynamic>? ?? {};
     entregaId = args['entregaId'] as String? ?? '';
-    entrega$ = entregaId.isEmpty ? const Stream.empty() : _service.watchById(entregaId);
+    entrega$ = entregaId.isEmpty
+        ? const Stream.empty()
+        : _service.watchById(entregaId);
   }
 
-  Future<void> confirmarColeta() async {
-    if (entregaId.isEmpty) return;
-    await _service
-        .updateStatus(entregaId: entregaId, novoStatus: 'confirmada');
+  String? get _uid => _auth.currentUser?.uid;
+  String get currentEntregaId => entregaId;
+
+  Future<void> aceitarEntrega() async {
+    final uid = _uid;
+    if (entregaId.isEmpty || uid == null) return;
+    await _service.acceptDelivery(entregaId: entregaId, uid: uid);
   }
 
   Future<void> cancelarCorrida() async {
-    if (entregaId.isEmpty) return;
-    await _service
-        .updateStatus(entregaId: entregaId, novoStatus: 'cancelada');
+    final uid = _uid;
+    if (entregaId.isEmpty || uid == null) return;
+    await _service.cancelDelivery(entregaId: entregaId, uid: uid);
+  }
+
+  Future<void> confirmarColeta() async {
+    final uid = _uid;
+    if (entregaId.isEmpty || uid == null) return;
+    await _service.confirmarColeta(entregaId: entregaId, uid: uid);
+  }
+
+  Future<void> confirmarEntrega() async {
+    final uid = _uid;
+    if (entregaId.isEmpty || uid == null) return;
+    await _service.confirmarEntrega(entregaId: entregaId, uid: uid);
   }
 }
