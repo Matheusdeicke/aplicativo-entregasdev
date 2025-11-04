@@ -149,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                       final disabled = acceptedByOther;
                       final badgeText = acceptedByMe
                           ? 'Aceita por você'
-                          : (acceptedByOther ? 'Reservado' : null);
+                          : (acceptedByOther ? 'Indisponível' : null);
 
                       VoidCallback? onTap;
                       if (!disabled) {
