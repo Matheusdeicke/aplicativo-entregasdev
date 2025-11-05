@@ -27,8 +27,8 @@ class _MapPageState extends State<MapPage> {
 
   // localização do entregador
   StreamSubscription<Position>? _posSub;
-  LatLng? _driver;
-  String? _locError;
+  LatLng? _entregador;
+  String? _locErrorMessage;
 
   // distância/ETA
   final _dist = const Distance();
@@ -53,7 +53,7 @@ class _MapPageState extends State<MapPage> {
       // verificação
       if (mounted) {
         setState(
-          () => _locError = 'Serviço de localização desativado. Ative o GPS.',
+          () => _locErrorMessage = 'Serviço de localização desativado. Ative o GPS.',
         );
       }
       return;
@@ -66,7 +66,7 @@ class _MapPageState extends State<MapPage> {
     if (perm == LocationPermission.denied) {
       // verificação
       if (mounted) {
-        setState(() => _locError = 'Permissão de localização negada.');
+        setState(() => _locErrorMessage = 'Permissão de localização negada.');
       }
       return;
     }
@@ -74,8 +74,8 @@ class _MapPageState extends State<MapPage> {
       // verificação
       if (mounted) {
         setState(
-          () => _locError =
-              'Permissão negada permanentemente. Vá em Ajustes > Apps > Permissões.',
+          () => _locErrorMessage =
+              'Permissão negada permanentemente.',
         );
       }
       return;
@@ -88,15 +88,15 @@ class _MapPageState extends State<MapPage> {
       // verificação
       if (mounted) {
         setState(() {
-          _driver = LatLng(p.latitude, p.longitude);
-          _locError = null;
+          _entregador = LatLng(p.latitude, p.longitude);
+          _locErrorMessage = null;
         });
       }
     } catch (_) {
       // verificação
       if (mounted) {
         setState(
-          () => _locError = 'Não foi possível obter a localização inicial.',
+          () => _locErrorMessage = 'Não foi possível obter a localização inicial.',
         );
       }
     }
@@ -109,7 +109,7 @@ class _MapPageState extends State<MapPage> {
         ).listen((pos) {
           if (mounted) {
             setState(() {
-              _driver = LatLng(pos.latitude, pos.longitude);
+              _entregador = LatLng(pos.latitude, pos.longitude);
             });
           }
         });
@@ -135,7 +135,7 @@ class _MapPageState extends State<MapPage> {
 
   String _fmtMin(int? m) => m == null ? '--' : '$m min';
 
-  Widget _bigCenterTitle(String distancia, String estimativa) {
+  Widget _centerTitle(String distancia, String estimativa) {
     return IgnorePointer(
       ignoring: true,
       child: Column(
@@ -175,7 +175,7 @@ class _MapPageState extends State<MapPage> {
 
           final loja = e?.localizacao;
 
-          final origem = _driver;
+          final origem = _entregador;
 
           final center = (origem != null && loja != null)
               ? LatLng(
@@ -208,13 +208,13 @@ class _MapPageState extends State<MapPage> {
               else
                 const SizedBox(height: 100),
 
-              if (_locError != null)
+              if (_locErrorMessage != null)
                 Container(
                   width: double.infinity,
                   color: const Color(0xFF2A2A2A),
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    _locError!,
+                    _locErrorMessage!,
                     style: const TextStyle(
                       color: Colors.orangeAccent,
                       fontSize: 13,
@@ -240,7 +240,7 @@ class _MapPageState extends State<MapPage> {
                         alignment: Alignment.topCenter,
                         child: Padding(
                           padding: const EdgeInsets.only(top: 12),
-                          child: _bigCenterTitle(distanciaTxt, etaTxt),
+                          child: _centerTitle(distanciaTxt, etaTxt),
                         ),
                       ),
 

@@ -21,8 +21,8 @@ class _MapPageEntregaState extends State<MapPageEntrega> {
       LatLng(-29.690077344166916, -52.455172648394694);
   static const double _zoom = 13.8;
 
-  final _dist = const Distance();
-  static const _avgSpeedKmh = 24.0;
+  final _distancia = const Distance();
+  static const _velocidadeMediaKmh = 24.0;
 
   @override
   void initState() {
@@ -32,12 +32,12 @@ class _MapPageEntregaState extends State<MapPageEntrega> {
 
   double? _kmBetween(LatLng? a, LatLng? b) {
     if (a == null || b == null) return null;
-    return _dist.as(LengthUnit.Kilometer, a, b);
+    return _distancia.as(LengthUnit.Kilometer, a, b);
   }
 
   int? _etaMinutes(double? km) {
     if (km == null) return null;
-    final minutes = (km / _avgSpeedKmh) * 60.0;
+    final minutes = (km / _velocidadeMediaKmh) * 60.0;
     return minutes.clamp(1, double.infinity).round();
   }
 
@@ -49,7 +49,7 @@ class _MapPageEntregaState extends State<MapPageEntrega> {
 
   String _fmtMin(int? m) => m == null ? '--' : '$m min';
 
-  Widget _bigCenterTitle(String distancia, String estimativa) {
+  Widget _centerTitle(String distancia, String estimativa) {
     return IgnorePointer(
       ignoring: true,
       child: Column(
@@ -147,7 +147,7 @@ class _MapPageEntregaState extends State<MapPageEntrega> {
                       alignment: Alignment.topCenter,
                       child: Padding(
                         padding: const EdgeInsets.only(top: 12),
-                        child: _bigCenterTitle(distanciaTxt, etaTxt),
+                        child: _centerTitle(distanciaTxt, etaTxt),
                       ),
                     ),
 
