@@ -57,7 +57,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '511904374346',
     projectId: 'flutter-entregadev',
     storageBucket: 'flutter-entregadev.firebasestorage.app',
-    databaseURL: "https://flutter-entregadev-default-rtdb.firebaseio.com",
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
