@@ -48,6 +48,7 @@ class DefaultFirebaseOptions {
     authDomain: 'flutter-entregadev.firebaseapp.com',
     storageBucket: 'flutter-entregadev.firebasestorage.app',
     measurementId: 'G-MK6CXSV99S',
+    databaseURL: 'https://flutter-entregadev-default-rtdb.firebaseio.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -56,6 +57,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '511904374346',
     projectId: 'flutter-entregadev',
     storageBucket: 'flutter-entregadev.firebasestorage.app',
+    databaseURL: "https://flutter-entregadev-default-rtdb.firebaseio.com",
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
