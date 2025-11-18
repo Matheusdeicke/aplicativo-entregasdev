@@ -1,3 +1,4 @@
+import 'package:entrega_dev/core/auth/location_tracker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthException implements Exception {
@@ -24,6 +25,8 @@ class AuthService {
         email: email,
         password: password,
       );
+      final uid = _firebaseAuth.currentUser!.uid;
+      LocationTracker.start(uid);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' ||
           e.code == 'wrong-password' ||
@@ -42,6 +45,7 @@ class AuthService {
   }
 
   Future<void> signOut() async {
+    LocationTracker.stop();
     await _firebaseAuth.signOut();
   }
 }
