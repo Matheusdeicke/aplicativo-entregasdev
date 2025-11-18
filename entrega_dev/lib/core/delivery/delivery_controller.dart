@@ -7,11 +7,20 @@ class DeliveryController {
   final DeliveryService _service;
   final FirebaseAuth _auth;
 
+  late final Stream<List<DeliveryModel>> entregasStream;
   late final Stream<List<DeliveryModel>> entregasFinalizadasStream;
   late final Stream<double> totalGanhosStream;
 
   DeliveryController(this._service, this._auth) {
     final uid = _auth.currentUser?.uid ?? '';
+    
+    entregasStream = _service.getAvailableDeliveries().map((list) {
+      return list.where((d) {
+        if (d.status == 'pendente') return true;
+        return d.acceptedBy == uid;
+      }).toList();
+    });
+
     entregasFinalizadasStream = uid.isEmpty
         ? const Stream.empty()
         : _service.getFinishDeliveriesByUser(uid);

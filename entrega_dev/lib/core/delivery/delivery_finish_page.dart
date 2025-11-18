@@ -110,7 +110,7 @@ class _DeliveryFinishState extends State<DeliveryFinish> {
                   if (snapshot.hasError) {
                     return Center(
                       child: Text(
-                        'Erro ao carregar entregas finalizadas',
+                        'Erro ao carregar entregas finalizadas\n${snapshot.error}',
                         style: TextStyle(
                           color: segundaCor,
                           fontFamily: 'Figtree',

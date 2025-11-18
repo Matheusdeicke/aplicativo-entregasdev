@@ -35,7 +35,6 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          // Mensagem de bem vindo
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 30.0),
@@ -50,7 +49,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            // Mensagem de entregas disponiveis e botão para acessar entregas finalizadas
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 25.0,
@@ -93,7 +91,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            // Listagem das entregas disponiveis
             Expanded(
               child: StreamBuilder<List<DeliveryModel>>(
                 stream: controller.entregasStream,
@@ -104,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                   if (snapshot.hasError) {
                     return Center(
                       child: Text(
-                        'Erro ao carregar entregas',
+                        'Erro ao carregar entregas:\n${snapshot.error}',
                         style: TextStyle(
                           color: segundaCor,
                           fontFamily: 'Figtree',
