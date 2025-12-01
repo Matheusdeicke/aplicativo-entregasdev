@@ -1,6 +1,6 @@
 # Aplicativo Entregas Dev
 
-Aplicativo desenvolvido em **Flutter** utilizando **FLutter Modular** especialmente para os entregadores, onde é possível visualizar **solicitações de entrega** cadastradas pela loja no **Dashboard Web - Entregas Dev**
+Aplicativo desenvolvido em **Flutter** utilizando **Flutter Modular** especialmente para os entregadores, onde é possível visualizar **solicitações de entrega** cadastradas pela loja no **Dashboard Web - Entregas Dev**
 
 ---
 
